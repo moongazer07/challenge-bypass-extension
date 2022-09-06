@@ -2,12 +2,13 @@ import CopyWebpackPlugin from 'copy-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
+import { fileURLToPath } from 'url';
 import path from 'path';
 
 // import buffer from "buffer";
 // import streamBrowserify from "stream-browserify";
 
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const tsloader = {
     test: /\.tsx?$/,
@@ -33,6 +34,24 @@ const background = {
     ...common,
     entry: {
         background: path.resolve('src/background/index.ts'),
+    },
+    externals: { crypto: 'null' },
+    module: {
+        rules: [tsloader],
+    },
+    resolve: {
+        extensions: ['.tsx', '.ts', '.js'],
+        fallback: {
+            // 'buffer': buffer,
+            // 'stream': streamBrowserify,
+        },
+    },
+};
+
+const blindrsa = {
+    ...common,
+    entry: {
+        blindrsa: path.resolve('src/blindrsa/index.ts'),
     },
     externals: { crypto: 'null' },
     module: {
@@ -85,4 +104,4 @@ const popup = {
 };
 
 // Mutiple targets for webpack: https://webpack.js.org/concepts/targets/#multiple-targets
-export default [background, popup];
+export default [blindrsa, background, popup];
